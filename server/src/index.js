@@ -4,6 +4,7 @@ import connection from "./database/database.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "./database/models/User.js";
+import authRouter from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(cookieParser());
     console.error(err);
   }
 })();
+
+app.use(authRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server in ${process.env.PORT}`);

@@ -1,13 +1,33 @@
 import { useState } from "react";
 import TextInput from "../components/TextInput";
+import api from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [repeatPassword, setRepeatPassword] = useState();
 
-  function submitHandler(e) {
+  const navigate = useNavigate();
+
+  async function submitHandler(e) {
     e.preventDefault();
+
+    if (password != repeatPassword) return;
+
+    const req = {
+      email,
+      password,
+    };
+
+    try {
+      const res = await api.post("/register", req);
+      const data = res.data;
+
+      if (data.success) navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
@@ -28,6 +48,7 @@ function Register() {
           value={repeatPassword}
           handler={(e) => setRepeatPassword(e.target.value)}
         />
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

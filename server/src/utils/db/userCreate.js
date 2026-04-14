@@ -1,4 +1,4 @@
-import User from "../../database/models/User";
+import User from "../../database/models/User.js";
 
 export default async function (email, password) {
   try {
