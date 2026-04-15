@@ -2,6 +2,7 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import userCreate from "../utils/db/userCreate.js";
 import jwtSign from "../utils/others/jwtSign.js";
+import userFind from "../utils/db/userFind.js";
 
 export async function register(req, res) {
   const { email, password } = req.body;
@@ -40,7 +41,25 @@ export async function login(req, res) {
   const { email, password } = req.body;
 
   try {
-    console.log("test");
+    const userFindResult = await userFind(email, password);
+
+    if (!userFindResult.success) return res.status(404).json(userFindResult);
+
+    const token = await jwtSign(
+      userFindResult.user.id,
+      userFindResult.user.email,
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+
+    res.status(200).json({
+      success: true,
+    });
   } catch (err) {
     console.error(err);
   }
